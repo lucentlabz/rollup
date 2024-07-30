@@ -11,7 +11,9 @@ import {
 	UNKNOWN_PATH,
 	UnknownKey
 } from '../../utils/PathTracker';
+import { checkEffectForNodes } from '../../utils/checkEffectForNodes';
 import type ClassBody from '../ClassBody';
+import type Decorator from '../Decorator';
 import Identifier from '../Identifier';
 import type Literal from '../Literal';
 import MethodDefinition from '../MethodDefinition';
@@ -26,6 +28,7 @@ export default class ClassNode extends NodeBase implements DeoptimizableEntity {
 	declare body: ClassBody;
 	declare id: Identifier | null;
 	declare superClass: ExpressionNode | null;
+	declare decorators: Decorator[];
 	private declare classConstructor: MethodDefinition | null;
 	private objectEntity: ObjectEntity | null = null;
 
@@ -79,7 +82,7 @@ export default class ClassNode extends NodeBase implements DeoptimizableEntity {
 		if (!this.deoptimized) this.applyDeoptimizations();
 		const initEffect = this.superClass?.hasEffects(context) || this.body.hasEffects(context);
 		this.id?.markDeclarationReached();
-		return initEffect || super.hasEffects(context);
+		return initEffect || super.hasEffects(context) || checkEffectForNodes(this.decorators, context);
 	}
 
 	hasEffectsOnInteractionAtPath(
@@ -105,6 +108,8 @@ export default class ClassNode extends NodeBase implements DeoptimizableEntity {
 		this.included = true;
 		this.superClass?.includePath(UNKNOWN_PATH, context, includeChildrenRecursively);
 		this.body.includePath(UNKNOWN_PATH, context, includeChildrenRecursively);
+		for (const decorator of this.decorators)
+			decorator.includePath(UNKNOWN_PATH, context, includeChildrenRecursively);
 		if (this.id) {
 			this.id.markDeclarationReached();
 			this.id.includePath(UNKNOWN_PATH);
