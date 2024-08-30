@@ -166,6 +166,7 @@ const ADDON_ERROR = 'ADDON_ERROR',
 	PARSE_ERROR = 'PARSE_ERROR',
 	PLUGIN_ERROR = 'PLUGIN_ERROR',
 	REDECLARATION_ERROR = 'REDECLARATION_ERROR',
+	RESERVED_NAMESPACE = 'RESERVED_NAMESPACE',
 	SHIMMED_EXPORT = 'SHIMMED_EXPORT',
 	SOURCEMAP_BROKEN = 'SOURCEMAP_BROKEN',
 	SOURCEMAP_ERROR = 'SOURCEMAP_ERROR',
@@ -778,7 +779,6 @@ export function logMissingNodeBuiltins(externalBuiltins: string[]): RollupLog {
 	};
 }
 
-// eslint-disable-next-line unicorn/prevent-abbreviations
 export function logMissingFileOrDirOption(): RollupLog {
 	return {
 		code: MISSING_OPTION,
@@ -874,6 +874,13 @@ export function logRedeclarationError(name: string): RollupLog {
 	return {
 		code: REDECLARATION_ERROR,
 		message: `Identifier "${name}" has already been declared`
+	};
+}
+
+export function logReservedNamespace(namespace: string): RollupLog {
+	return {
+		code: RESERVED_NAMESPACE,
+		message: `You have overided reserved namespace "${namespace}"`
 	};
 }
 

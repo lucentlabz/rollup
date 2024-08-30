@@ -28,9 +28,7 @@ export interface ObjectProperty {
 	property: ExpressionEntity;
 }
 
-export interface PropertyMap {
-	[key: string]: ExpressionEntity[];
-}
+export type PropertyMap = Record<string, ExpressionEntity[]>;
 const INTEGER_REG_EXP = /^\d+$/;
 
 export class ObjectEntity extends ExpressionEntity {

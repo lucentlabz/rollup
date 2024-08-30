@@ -2,6 +2,7 @@ import type { Bundle as MagicStringBundle } from 'magic-string';
 import type { NormalizedOutputOptions } from '../rollup/types';
 import type { GenerateCodeSnippets } from '../utils/generateCodeSnippets';
 import { error, logMissingNameOptionForUmdExport } from '../utils/logs';
+import type { FinaliserOptions } from './index';
 import getCompleteAmdId from './shared/getCompleteAmdId';
 import { getExportBlock, getNamespaceMarkers } from './shared/getExportBlock';
 import getInteropBlock from './shared/getInteropBlock';
@@ -10,7 +11,6 @@ import { assignToDeepVariable } from './shared/setupNamespace';
 import trimEmptyImports from './shared/trimEmptyImports';
 import updateExtensionForRelativeAmdId from './shared/updateExtensionForRelativeAmdId';
 import warnOnBuiltins from './shared/warnOnBuiltins';
-import type { FinaliserOptions } from './index';
 
 function globalProperty(
 	name: string | false | undefined,
@@ -97,7 +97,8 @@ export default function umd(
 				`${
 					extend ? `${globalProperty(name!, globalVariable, getPropertyAccess)}${_}||${_}` : ''
 				}{}`,
-				snippets
+				snippets,
+				log
 			)
 		);
 
@@ -125,7 +126,8 @@ export default function umd(
 				globalVariable,
 				globals,
 				`${factoryVariable}(${globalDeps.join(`,${_}`)})`,
-				snippets
+				snippets,
+				log
 			)};`;
 		} else {
 			const module = globalDeps.shift();
@@ -150,7 +152,7 @@ export default function umd(
 	} else {
 		iifeExport = `${factoryVariable}(${globalDeps.join(`,${_}`)})`;
 		if (!namedExportsMode && hasExports) {
-			iifeExport = assignToDeepVariable(name!, globalVariable, globals, iifeExport, snippets);
+			iifeExport = assignToDeepVariable(name!, globalVariable, globals, iifeExport, snippets, log);
 		}
 	}
 

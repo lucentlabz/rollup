@@ -345,15 +345,12 @@ export default class Module {
 			},
 			id,
 			get implicitlyLoadedAfterOneOf() {
-				// eslint-disable-next-line unicorn/prefer-spread
 				return Array.from(implicitlyLoadedAfter, getId).sort();
 			},
 			get implicitlyLoadedBefore() {
-				// eslint-disable-next-line unicorn/prefer-spread
 				return Array.from(implicitlyLoadedBefore, getId).sort();
 			},
 			get importedIdResolutions() {
-				// eslint-disable-next-line unicorn/prefer-spread
 				return Array.from(
 					sourcesWithAttributes.keys(),
 					source => module.resolvedIds[source]
@@ -362,7 +359,7 @@ export default class Module {
 			get importedIds() {
 				// We cannot use this.dependencies because this is needed before
 				// dependencies are populated
-				// eslint-disable-next-line unicorn/prefer-spread
+
 				return Array.from(
 					sourcesWithAttributes.keys(),
 					source => module.resolvedIds[source]?.id
@@ -413,7 +410,9 @@ export default class Module {
 	}
 
 	error(properties: RollupError, pos: number | undefined): never {
-		pos !== undefined && this.addLocationToLogProps(properties, pos);
+		if (pos !== undefined) {
+			this.addLocationToLogProps(properties, pos);
+		}
 		return error(properties);
 	}
 
@@ -947,7 +946,7 @@ export default class Module {
 			attributes: this.info.attributes,
 			code: this.info.code!,
 			customTransformCache: this.customTransformCache,
-			// eslint-disable-next-line unicorn/prefer-spread
+
 			dependencies: Array.from(this.dependencies, getId),
 			id: this.id,
 			meta: this.info.meta,
@@ -1423,5 +1422,4 @@ const copyNameToModulesMap = (
 	searchedNamesAndModules?: Map<string, Set<Module | ExternalModule>>
 ): Map<string, Set<Module | ExternalModule>> | undefined =>
 	searchedNamesAndModules &&
-	// eslint-disable-next-line unicorn/prefer-spread
 	new Map(Array.from(searchedNamesAndModules, ([name, modules]) => [name, new Set(modules)]));
